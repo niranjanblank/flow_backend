@@ -40,7 +40,9 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     """ Fields needed when registering user(in this case username, email and password) """
     password: str
-
+    avatar_link: str | None = None
+    full_name: str | None = None
+    description: str | None = None
 
 class UserRead(UserBase):
     """ Fields returned when querying user details"""
@@ -161,6 +163,10 @@ class TokenData(BaseModel):
 class UserReadWithBoard(UserBase):
     boards: list[BoardRead] = []
     id: int
+    avatar_link: str | None = None
+    full_name: str | None = None
+    description: str | None = None
+
 
 
 class BoardReadWithOwner(BoardBase):

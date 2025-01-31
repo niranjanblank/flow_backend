@@ -12,12 +12,13 @@ router = APIRouter()
 
 @router.post("/users/", response_model=UserRead)
 def create_user_endpoint(user: UserCreate, db: Session = Depends(get_session)):
+    print(user)
     db_user = create_user(db=db, user=user)
     return db_user
 
 
 @router.get("/users/{user_id}", response_model=UserReadWithBoard)
-def get_user_by_username(user_id: int, db: Session = Depends(get_session)):
+def get_user_by_userid_endpoint(user_id: int, db: Session = Depends(get_session)):
     db_user = get_user_by_id(db, user_id)
     return db_user
 

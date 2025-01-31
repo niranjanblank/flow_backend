@@ -11,12 +11,24 @@ def create_user(db: Session, user: UserCreate):
         if existing_user:
             raise HTTPException(status_code=400, detail="Username already taken")
         hashed_password = get_password_hash(user.password)
-        db_user = User(username=user.username, email=user.email, password=hashed_password)
+        db_user = User(username=user.username, email=user.email, password=hashed_password,
+                full_name = user.full_name,
+                description = user.description,  # Set to None
+                avatar_link = user.avatar_link  # Set to None
+                )
+
+
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
         return db_user
+    except HTTPException as http_ex:
+        # Reraise the HTTPException to be handled by FastAPI
+
+        db.rollback()
+        raise http_ex
     except Exception as e:
+
         db.rollback()
         raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
 
