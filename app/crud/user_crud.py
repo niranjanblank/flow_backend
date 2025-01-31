@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-from ..schemas.schemas import UserCreate
+from ..schemas.schemas import UserCreate, UserUpdate
 from app.models.user import User
 from fastapi import HTTPException
 from ..auth import get_password_hash
@@ -61,3 +61,22 @@ def read_users(db: Session, skip: int, limit: int):
         # Handle unexpected errors
         # Log the error or handle it as needed
         raise HTTPException(status_code=500, detail=f"An error occurred while getting Users: {e}")
+
+def update_user(db: Session, user_id: int, user: UserUpdate):
+    try:
+        db_user = db.get(User, user_id)
+        if not db_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        # exclude fields that doesnt have a value
+        update_data = user.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_user, key, value)
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        return db_user
+    except HTTPException as http_ex:
+        # Reraise the HTTPException to be handled by FastAPI
+        raise http_ex
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred while updating user: {e}")

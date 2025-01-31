@@ -55,3 +55,41 @@ def test_user_pagination(client, create_test_users):
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 0  # Expecting no users as skip is beyond the total number of users
+
+def test_update_user(client, create_test_user):
+    user_id = create_test_user.id  # Get an existing user ID
+
+    updated_data = {
+        "email": "updatedemail@example.com",
+        "avatar_link": "https://example.com/avatar.jpg",
+        "full_name": "Updated Full Name",
+        "description": "Updated description"
+    }
+
+    response = client.put(f"/users/update/{user_id}", json=updated_data)
+
+    assert response.status_code == 200
+    updated_user = response.json()
+    assert updated_user["id"] == user_id
+    assert updated_user["email"] == updated_data["email"]
+    assert updated_user["avatar_link"] == updated_data["avatar_link"]
+    assert updated_user["full_name"] == updated_data["full_name"]
+    assert updated_user["description"] == updated_data["description"]
+    assert updated_user["username"] == create_test_user.username  # Ensure username remains unchanged
+
+def test_update_user_partial_data(client, create_test_user):
+    user_id = create_test_user.id  # Get an existing user ID
+
+    updated_data = {
+        "full_name": "Partially Updated Name"
+    }
+
+    response = client.put(f"/users/update/{user_id}", json=updated_data)
+
+    assert response.status_code == 200
+    updated_user = response.json()
+    assert updated_user["id"] == user_id
+    assert updated_user["full_name"] == updated_data["full_name"]
+    assert updated_user["email"] == create_test_user.email  # Ensure email remains unchanged
+    assert updated_user["avatar_link"] == create_test_user.avatar_link
+    assert updated_user["description"] == create_test_user.description

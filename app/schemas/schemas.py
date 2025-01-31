@@ -46,6 +46,13 @@ class UserRead(UserBase):
     """ Fields returned when querying user details"""
     id: int
 
+class UserUpdate(UserBase):
+    """ Fields for updating user"""
+    email: str | None = None
+    username: str | None = None
+    avatar_link: str| None = None
+    full_name: str | None = None
+    description: str | None = None
 
 ## BoardList Schemas
 class BoardList(BaseModel):

@@ -11,7 +11,7 @@ from ..models.board_lists import BoardList
 from ..models.list_card import ListCard
 from ..models.board_label import BoardLabel
 from ..models.card_label import CardLabelLink
-
+from app.auth import get_password_hash
 load_dotenv()
 
 TEST_DB_URL = os.getenv('TEST_DB_URL')
@@ -93,6 +93,24 @@ def create_test_users(test_db_session: Session, ):
     test_db_session.commit()
     return users
 
+
+@pytest.fixture(scope="function")
+def create_test_user(test_db_session):
+    """Fixture to create a test user in the database with minimal fields"""
+    test_user = User(
+        username="testuser",
+        email="testuser@example.com",
+        password=get_password_hash("securepassword"),  # Hash the password
+        full_name="Test User",
+        description=None,  # Set to None
+        avatar_link=None  # Set to None
+    )
+
+    test_db_session.add(test_user)
+    test_db_session.commit()
+    test_db_session.refresh(test_user)
+
+    return test_user  # Return the created user object
 
 # Fixture to create boards in the database
 @pytest.fixture(scope="function")
