@@ -1,4 +1,16 @@
+# Virtual environment (Do NOT track venv folder)
 venv
+
+# PyCharm IDE config (ignore JetBrains files)
 .idea
-__pycahce__
+
+# Python cache files (ignore compiled Python files)
+__pycache__
+*.pyc
+*.pyo
+
+# Environment variables (DO NOT commit `.env` containing secrets)
 .env
+
+# Alembic cache files (Keep migrations, ignore cache)
+alembic/versions/__pycache__/
