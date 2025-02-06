@@ -92,3 +92,14 @@ def update_user(db: Session, user_id: int, user: UserUpdate):
         raise http_ex
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred while updating user: {e}")
+
+def update_user_password(db: Session, user_id: int, old_password: str, new_password: str):
+    try:
+        # TODO: If user doesnt exist, raise error
+        # TODO: If new_password and old_password doesnt pass validation, raise error
+        # TODO: If old password is equal to new password, raise error
+        # TODO: if old_password doesnt match, raise error
+
+        pass
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred while updating user password: {e}")

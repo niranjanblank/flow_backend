@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 
@@ -191,3 +191,8 @@ class ListWithBoard(BoardListRead):
 
 class CardWithListAndLabel(ListCardWithLabels):
     belongs_to_list: ListWithBoard
+
+# password validator
+class PasswordUpdateRequest(BaseModel):
+    old_password: str =  Field(..., min_length=4, description="Password must be at least 4 characters long.")
+    new_password: str =  Field(..., min_length=4, description="Password must be at least 4 characters long.")

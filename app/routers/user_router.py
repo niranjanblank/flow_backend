@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, Query, HTTPException, status
 from sqlmodel import Session
-from ..schemas.schemas import UserRead, UserCreate, UserReadWithBoard, Token, UserUpdate
-from ..crud.user_crud import create_user, get_user_by_id, read_users, get_user_by_username, update_user
+from ..schemas.schemas import UserRead, UserCreate, UserReadWithBoard, Token, UserUpdate, PasswordUpdateRequest
+from ..crud.user_crud import create_user, get_user_by_id, read_users, get_user_by_username, \
+    update_user, update_user_password
 from ..database import get_session
 from fastapi.security import OAuth2PasswordRequestForm
 from ..auth import authenticate_user, create_access_token, get_current_active_user
@@ -36,4 +37,9 @@ def read_users_endpoint(skip: int = Query(0, ge=0), limit: int = Query(10, gt=0)
 @router.put("/users/update/{user_id}")
 def update_user_endpoint(user_id: int, user: UserUpdate, db: Session = Depends(get_session)):
     result = update_user(db, user_id, user)
+    return result
+
+@router.put("/users/update/password/{user_id}")
+def update_user_password_endpoint(user_id: int, request: PasswordUpdateRequest, db: Session = Depends(get_session)):
+    result = update_user_password(db, user_id, request.old_password, request.new_password)
     return result
