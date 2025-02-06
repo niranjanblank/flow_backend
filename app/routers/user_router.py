@@ -33,7 +33,7 @@ def read_users_endpoint(skip: int = Query(0, ge=0), limit: int = Query(10, gt=0)
     db_users = read_users(db, skip=skip, limit=limit)
     return db_users
 
-@router.put("/users/update/{user_id}", response_model=UserRead)
+@router.put("/users/update/{user_id}")
 def update_user_endpoint(user_id: int, user: UserUpdate, db: Session = Depends(get_session)):
-    db_user = update_user(db, user_id, user)
-    return db_user
+    result = update_user(db, user_id, user)
+    return result

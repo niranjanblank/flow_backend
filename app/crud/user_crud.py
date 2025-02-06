@@ -86,7 +86,7 @@ def update_user(db: Session, user_id: int, user: UserUpdate):
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
-        return db_user
+        return {"detail": "User updated successfully"}
     except HTTPException as http_ex:
         # Reraise the HTTPException to be handled by FastAPI
         raise http_ex
