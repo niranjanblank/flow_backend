@@ -2,7 +2,7 @@ from sqlmodel import Session, select
 from ..schemas.schemas import UserCreate, UserUpdate
 from app.models.user import User
 from fastapi import HTTPException
-from ..auth import get_password_hash
+from ..auth import get_password_hash, verify_password
 
 def create_user(db: Session, user: UserCreate):
     try:
@@ -95,11 +95,25 @@ def update_user(db: Session, user_id: int, user: UserUpdate):
 
 def update_user_password(db: Session, user_id: int, old_password: str, new_password: str):
     try:
-        # TODO: If user doesnt exist, raise error
-        # TODO: If new_password and old_password doesnt pass validation, raise error
-        # TODO: If old password is equal to new password, raise error
-        # TODO: if old_password doesnt match, raise error
+        db_user = db.get(User, user_id)
+        if not db_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        if old_password == new_password:
+            raise HTTPException(status_code=400, detail="New password cannot be the same as the old password")
+        # check if old_password matches
+        if not verify_password(old_password, db_user.password):
+            raise HTTPException(status_code=400, detail="Old password is incorrect")
 
-        pass
+        # update password
+        db_user.password = get_password_hash(new_password)
+        db.commit()
+        db.refresh(db_user)
+
+        return {"detail": "Password updated successfully"}
+
+    except HTTPException as http_ex:
+        # Reraise the HTTPException to be handled by FastAPI
+        raise http_ex
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred while updating user password: {e}")
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"An error occurred while updating user: {e}")
