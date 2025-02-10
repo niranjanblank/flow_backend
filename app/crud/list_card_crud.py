@@ -166,3 +166,16 @@ def read_cards_overdue_today(db: Session):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred while fetching today's cards: {e}")
+
+def read_cards_upcoming(db: Session):
+    """ Fetch all cards that are upcoming """
+    try:
+        current_date = date.today()
+        statement = select(ListCard).where(and_(func.date(ListCard.due_date) > current_date, ~ListCard.completed))
+
+        cards_upcoming= db.exec(statement).all()
+        return cards_upcoming
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred while fetching upcoming cards: {e}")
+
