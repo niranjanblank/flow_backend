@@ -5,7 +5,7 @@ from sqlmodel import Session
 from ..database import get_session
 from ..crud.list_card_crud import create_list_card, read_list_card_by_list_id, \
     find_highest_order_card_in_list, update_list_card, delete_card_by_id, read_list_card_by_id, \
-    read_cards_due_today, read_cards_overdue_today, read_cards_upcoming
+    read_cards_due_today, read_cards_overdue_today, read_cards_upcoming, read_completed_cards
 
 router = APIRouter()
 
@@ -49,16 +49,21 @@ def update_list_card_endpoint(list_card_id: int, card_update: ListCardUpdate,
     return db_card
 
 
-@router.get("/list_card/due/due_today", response_model=list[CardWithListAndLabel])
+@router.get("/list_card/cards/due_today", response_model=list[CardWithListAndLabel])
 def get_cards_due_today_endpoint(db: Session = Depends(get_session)):
     return read_cards_due_today(db)
 
 
-@router.get("/list_card/overdue/today", response_model=list[CardWithListAndLabel])
+@router.get("/list_card/cards/overdue", response_model=list[CardWithListAndLabel])
 def get_cards_overdue_endpoint(db: Session = Depends(get_session)):
     return read_cards_overdue_today(db)
 
 
-@router.get("/list_card/upcoming/today", response_model=list[CardWithListAndLabel])
+@router.get("/list_card/cards/upcoming/", response_model=list[CardWithListAndLabel])
 def get_cards_upcoming_endpoint(db: Session = Depends(get_session)):
     return read_cards_upcoming(db)
+
+
+@router.get("/list_card/cards/completed", response_model=list[CardWithListAndLabel])
+def get_cards_completed_endpoint(db: Session = Depends(get_session)):
+    return read_completed_cards(db)

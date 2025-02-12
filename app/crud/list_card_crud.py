@@ -179,3 +179,12 @@ def read_cards_upcoming(db: Session):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred while fetching upcoming cards: {e}")
 
+
+def read_completed_cards(db: Session):
+    """ Fetch cards that are completed """
+    try:
+        statement = select(ListCard).where(ListCard.completed==True)
+        completed = db.exec(statement).all()
+        return completed
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred while fetching completed cards: {e}")
